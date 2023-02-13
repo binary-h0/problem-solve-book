@@ -77,8 +77,8 @@ class Analyzer:
             j_p = j_lis[idx_j]
             m_p = m_lis[idx_m]
             if (j_p == m_p):
-                j_p += 1
-                m_p += 1
+                idx_j += 1
+                idx_m += 1
             elif j_p < m_p:
                 self.updateProblemList.append(m_p)
                 idx_j += 1
@@ -98,7 +98,7 @@ class Analyzer:
                 j['baekjoon']['problems'] = m_problems
                 self.updateJson(j)
             else:
-                pass
+                print("adf")
 
 
 if __name__ == '__main__':
