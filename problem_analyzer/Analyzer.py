@@ -23,16 +23,18 @@ class Analyzer:
                 file_path = file_path.split('.')
                 type = file_path[-1]
                 path = '.'.join(file_path)
-                self.fileLists[self.fileTypes[type]].append(path)
+                self.fileLists[self.fileTypes[type]].append([path, 0])
     def getFileList(self):
         return self.fileLists
     def setProblemList(self):
         for files in self.fileLists:
             for file in files:
-                token = file.split('/')
+                token = file[0].split('/')
                 token1 = token[-1].split('.')
                 if token1[0].isdigit():
                     self.problemList.append(int(token1[0]))
+                    file[1] = int(token1[0])
+            files.sort(key=lambda x:x[1])
         self.problemList.sort()
     def printPath(self):
         print(self.path)
@@ -41,7 +43,7 @@ class Analyzer:
             for file in files:
                 file_path = os.path.join(root, file)
                 print(file_path)
-    def allFileCopyToFolder(self, copyPathLists):
+    def copyAllFileToMemory(self, copyPathLists):
         paste_folder_path = self.problemListPath
         for copyPath in copyPathLists:
             token = copyPath.split('/')
@@ -70,20 +72,25 @@ class Analyzer:
             json.dump(object, db, indent=2)
     def setUpdateFileList(self, j_lis, m_lis):
         idx_j, idx_m = 0, 0
-        self.updateProblemList = []
         if len(j_lis) == 0:
+            print("INIT")
             return m_lis
-        while idx_m < len(m_lis):
+        if len(j_lis) > len(m_lis):
+            print("MEMORY DELETED")
+            return
+        while True:
+            if (len(j_lis) == idx_j) or (len(m_lis) == idx_m):
+                break
             j_p = j_lis[idx_j]
             m_p = m_lis[idx_m]
             if (j_p == m_p):
                 idx_j += 1
                 idx_m += 1
-            elif j_p < m_p:
+            elif j_p != m_p:
                 self.updateProblemList.append(m_p)
-                idx_j += 1
-            else:
                 idx_m += 1
+    def copyFileToMemory(self, problems):
+        pass
     def updateProblemFolder(self):
         with open("problem_analyzer/problem_list.json", 'r') as db:
             j = json.load(db)
@@ -98,8 +105,8 @@ class Analyzer:
                 j['baekjoon']['problems'] = m_problems
                 self.updateJson(j)
             else:
+                print(self.fileLists[0])
                 print("adf")
-
 
 if __name__ == '__main__':
     analyzer = Analyzer()
