@@ -68,7 +68,7 @@ class Analyzer:
         with open("problem_analyzer/problem_list.json", 'w') as memory:
             json.dump(object, memory, indent=2)
     def updateJson(self, object):
-        with open("problem_analyzer/problem_list.json", 'w') as db:
+        with open("problem_list.json", 'w') as db:
             json.dump(object, db, indent=2)
     def setUpdateFileList(self, j_lis, m_lis):
         idx_j, idx_m = 0, 0
@@ -92,7 +92,7 @@ class Analyzer:
     def copyFileToMemory(self, problems):
         pass
     def updateProblemFolder(self):
-        with open("problem_analyzer/problem_list.json", 'r') as db:
+        with open("problem_list.json", 'r') as db:
             j = json.load(db)
             j_total = j['baekjoon']['total']
             j_problems = j['baekjoon']['problems']
@@ -111,7 +111,9 @@ class Analyzer:
 if __name__ == '__main__':
     analyzer = Analyzer()
     fileList = analyzer.getFileList()
+    print(analyzer.path)
     analyzer.updateProblemFolder()
+    # TODO 파일 개별 복사, 이슈
     # analyzer.createJson()
     # analyzer.saveJson()
     # analyzer.fileCopyToFolder(fileList[0])
