@@ -7,11 +7,12 @@ class Analyzer:
     def __init__(self):
         self.connector = Connector.Connector()
         self.path = self.connector.getPath()
-        self.problemListPath = "problem_list/"
+        self.problemListPath = "../problem_list/"
         self.problemList = []
         self.updateProblemList = []
         self.deleteProblemList = []
         self.issueFileList = []
+        self.issueTypes = ['Not Update Memory', 'File Changed', 'File Deleted']
         self.fileTypes = {'py':0, 'cpp':1, 'c':2, 'go':3, 'txt':4, 'pyc':5}
         self.fileLists = [[] for _ in range(len(self.fileTypes))]
         self.setAllFileList()
@@ -89,8 +90,23 @@ class Analyzer:
             elif j_p != m_p:
                 self.updateProblemList.append(m_p)
                 idx_m += 1
-    def copyFileToMemory(self, problems):
-        pass
+    def copyFileToMemory(self, path):
+        paste_folder_path = self.problemListPath
+        token = path.split('/')
+        shutil.copyfile(path, paste_folder_path + token[-1])
+        print("COPY:",token[-1])
+    def setDiffMemory(self, json_problem):
+        json_problem = set(json_problem)
+        memory_problem = set()
+        for root, directories, files in os.walk("../problem_list"):
+            for file in files:
+                name, type = file.split('.')
+                memory_problem.add(int(name))
+        path = dict()
+        for p, n in self.fileLists[0]:
+            path[n] = p
+        for problem in json_problem.difference(memory_problem):
+            self.copyFileToMemory(path[problem])
     def updateProblemFolder(self):
         with open("problem_list.json", 'r') as db:
             j = json.load(db)
@@ -104,16 +120,15 @@ class Analyzer:
                 j['baekjoon']['total'] = m_total
                 j['baekjoon']['problems'] = m_problems
                 self.updateJson(j)
-            else:
-                print(self.fileLists[0])
-                print("adf")
+            self.setDiffMemory(j['baekjoon']['problems'])
+
 
 if __name__ == '__main__':
     analyzer = Analyzer()
     fileList = analyzer.getFileList()
     print(analyzer.path)
     analyzer.updateProblemFolder()
-    # TODO 파일 개별 복사, 이슈
+    # TODO 이슈처리, 파일 타입, ...
     # analyzer.createJson()
     # analyzer.saveJson()
     # analyzer.fileCopyToFolder(fileList[0])
