@@ -122,7 +122,6 @@ class Analyzer:
                 self.updateJson(j)
             self.setDiffMemory(j['baekjoon']['problems'])
 
-
 if __name__ == '__main__':
     analyzer = Analyzer()
     fileList = analyzer.getFileList()
